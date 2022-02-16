@@ -1,0 +1,112 @@
+-- Group by
+select department, sum(salary)
+from employees
+group by department;
+
+-- total count of emp in each department
+select count(*), department
+from employees
+group by department
+order by count(*);
+
+select department, count(*) as total_emp, ROUND(AVG(salary)) 
+					as avg_sal, MIN(salary), MAX(salary)
+from employees
+group by department
+order by count(*);
+
+
+-- think we want to get the departments with employees
+-- more than 35
+
+select department, count(*)
+from employees
+group by department
+order by department;
+
+-- WE CANNOT FILTER DATA USING AGGREGATE FUNCTIONS IN WHERE CLAUSE
+-- NOT ALLOWED
+select department, count(*)
+from employees
+where count(*) > 35
+group by department
+order by department;
+
+-- THAT IS WHY WE HAVE A HAVING CLAUES
+select department, count(*)
+from employees
+group by department
+HAVING count(*) > 35 -- HAVING SHOULD BE AFTER GROUP BY
+order by department;
+
+
+-- get all first names and total counts
+select first_name, count(*)
+from employees
+group by first_name
+HAVING count(*) > 1
+order by count(*), first_name desc;
+
+select department
+from employees
+group by department;
+
+-- get all the domain names of the emails
+
+select SUBSTRING(email, POSITION('@' IN email) + 1), count(*)
+from employees
+group by SUBSTRING(email, POSITION('@'IN email) + 1)
+having SUBSTRING(email, POSITION('@'IN email) + 1) is not NULL
+order by count(*) desc;
+
+-- get min,max,avg salary for each region and each gender
+
+select gender, region_id, min(salary), max(salary), ROUND(avg(salary))
+from employees
+group by gender, region_id
+order by gender, region_id;
+
+
+-- group by practice fruit_imports.txt
+-- Write a query that displays only the state with the largest amount of fruit supply.
+
+select state
+from fruit_imports
+group by state
+order by SUM((supply * cost_per_unit)) desc
+limit 1;
+
+
+-- Write a query that returns the most expensive cost_per_unit of every season. 
+-- The query should display 2 columns, the season and the cost_per_unit
+
+select season, max(cost_per_unit)
+from fruit_imports
+group by season;
+
+-- Write a query that returns the state that has more than 1 import of the same fruit.
+
+select name, state, count(*)
+from fruit_imports
+group by name, state
+having count(*) > 1;
+
+-- Write a query that returns the seasons that produce either 3 fruits or 4 fruits.
+
+select season, count(*)
+from fruit_imports
+group by season
+having count(*) = 3 or count(*) = 4;
+
+-- Write a query that takes into consideration the supply and cost_per_unit columns 
+-- for determining the total cost and returns the most expensive state with the
+-- total cost.
+
+
+select state , SUM((supply * cost_per_unit))
+from fruit_imports
+group by state
+order by SUM((supply * cost_per_unit)) desc
+limit 1;
+
+
