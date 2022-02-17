@@ -1,0 +1,63 @@
+-- give all emps that work in electronic devision
+select first_name, department 
+from employees
+where department in (
+					select department 
+					from departments 
+					where division = 'Electronics');
+					
+					
+-- give employees that work in asia or canada and make over 130k
+select *
+from employees
+where region_id 
+	  in(select region_id from regions 
+		where country in ('Asia','Canada'))
+and salary > 130000;
+		
+-- give first_name and department aling with how much less they make from the max salary
+select first_name, department, (select max(salary) from employees) - salary as sal_diff
+from employees;
+
+-- employees that work in kids division and
+-- the dates of hire is greater than all the hire dates of employees who work in 
+-- maintainance department
+
+select *
+from employees
+where department in (select department from departments 
+				   where division = 'Kids')
+AND hire_date > ALL(select hire_date 
+					from employees 
+					where department = 'Maintenance');
+
+-- give those salaries that appears very frequently
+select salary
+from employees
+group by salary
+order by count(*) desc, salary desc
+limit 1;
+
+-- compute average salary but ignore the min and max salary
+select round(avg(salary))
+from employees
+where employee_id != (
+					select min(employee_id)
+					from employees
+					group by salary
+					order by salary
+					limit 1)
+AND employee_id != (
+					select min(employee_id)
+					from employees
+					group by salary
+					order by salary desc
+					limit 1);
+
+-- another way to do this
+select round(avg(salary))
+from employees
+where salary not in (
+(select min(salary) from employees),
+(select max(salary) from employees)
+);
