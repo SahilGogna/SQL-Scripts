@@ -1,0 +1,113 @@
+-- Case statements
+
+-- give count of all the well paid, executives(over 160k), under paid and unpaid
+
+select status, count(*) as total_emp
+from (
+		select 
+		CASE
+			when salary <100000 then 'Under-paid'
+			when salary > 100000 and salary < 160000 then 'Well-paid'
+			when salary > 160000 then 'Executive'
+			else 'Un-paid'
+		end as status
+		from employees) status_table
+group by status
+order by count(*);
+
+-- how to transpose
+select sum(case when salary > 100000 and salary < 160000 then 1 else 0 end) as Well_paid,
+	   sum(case when salary > 160000 then 1 else 0 end) as Executive,
+	   sum(case when salary < 100000 then 1 else 0 end) as Under_paid
+from employees;
+
+
+select
+	SUM(case when department = 'Sports' then 1 else 0 end) as sports_employees,
+	SUM(case when department = 'Tools' then 1 else 0 end) as sports_employees,
+	SUM(case when department = 'Clothing' then 1 else 0 end) as sports_employees,
+	SUM(case when department = 'Computers' then 1 else 0 end) as sports_employees
+from employees;
+
+
+--
+select first_name,
+		case when region_id = 1 then (select country from regions where region_id = 1) end as region_1,
+		case when region_id = 2 then 'United States' end as region_2,
+		case when region_id = 3 then 'United States' end as region_3,
+		case when region_id = 4 then 'Asia' end as region_4,
+		case when region_id = 5 then 'Asia' end as region_5,
+		case when region_id = 6 then 'Canada' end as region_6,
+		case when region_id = 7 then 'Canada' end as region_7
+from employees;
+
+-- get contry wise distribution of employees in columns
+
+select 
+	sum(case when region_id in (1,2,3) then 1 else 0 end) as united_states,
+	sum(case when region_id in (4,5) then 1 else 0 end) as asia,
+	sum(case when region_id in (6,7) then 1 else 0 end) as canada
+from employees;
+
+-- using old query
+select count(region_1) + count(region_2) + count(region_3) as "United States",
+count(region_4) + count(region_5) as Asia,
+count(region_6) + count(region_7) as Canada
+from
+	(select first_name,
+			case when region_id = 1 then (select country from regions where region_id = 1) end as region_1,
+			case when region_id = 2 then 'United States' end as region_2,
+			case when region_id = 3 then 'United States' end as region_3,
+			case when region_id = 4 then 'Asia' end as region_4,
+			case when region_id = 5 then 'Asia' end as region_5,
+			case when region_id = 6 then 'Canada' end as region_6,
+			case when region_id = 7 then 'Canada' end as region_7
+	from employees) a;
+
+
+
+
+
+select name
+from phones
+where phone_number in
+					(select caller, sum(duration)
+					from calls
+					group by caller
+					having sum(duration)>9);
+
+
+select f.id,f.name,
+case 
+	when ta.sc <= 20 then 'Difficult'
+	when ta.sc>20 and ta.sc <= 60 then 'Medium'
+	else 'Easy'
+end
+from tasks ta
+join (select task_id, avg(score) as sc
+from reports
+group by task_id) s
+on ta.id = s.task_id;
+
+
+select name, sum(supply),
+case
+	when sum(supply) <20000 then 'Low'
+	when sum(supply) >= 20000 and sum(supply) < 50000 then 'Enough'
+	else 'Full'
+end
+from fruit_imports
+group by name
+order by sum(supply);
+
+select 
+sum(case when season = 'Winter' then cost end) as Winter,
+sum(case when season = 'Summer' then cost end) as Summer,
+sum(case when season = 'All Year' then cost end) as "All Year",
+sum(case when season = 'Spring' then cost end) as Spring,
+sum(case when season = 'Fall' then cost end) as Fall
+from(
+select season, sum(supply * cost_per_unit) as cost
+from fruit_imports
+group by season) a;
+
