@@ -1,0 +1,45 @@
+-- find the employees who earn more than their departmental salary
+select first_name, salary
+from employees e1
+where salary >
+			(select round(avg(salary)) as average
+			from employees e2
+			where e2.department = e1.department);
+			
+-- now we want to also display the average salary in the col
+select first_name, salary,
+(select round(avg(salary)) as average
+			from employees e2
+			where e2.department = e1.department) as avg_sal
+from employees e1
+where salary > (select round(avg(salary)) as average
+			from employees e2
+			where e2.department = e1.department);
+			
+-- write a query to obtain the name of departments that have
+-- more than 38 employees
+
+select department
+from employees
+group by department
+having count(*) > 38;
+
+
+select department, max(Salary)
+from employees
+group by department;
+
+-- highest and lowest salary of each department
+select department, first_name, salary,
+case
+	when salary = max_sal then 'Highest'
+	when salary = min_sal then 'Lowest'
+end
+from
+(select department, first_name, salary,
+(select max(Salary) from employees e2 where e1.department = e2.department) as max_sal,
+(select min(Salary) from employees e2 where e1.department = e2.department) as min_sal
+from employees e1) a
+where a.salary = a.max_sal or a.salary = a.min_sal
+order by department;
+
