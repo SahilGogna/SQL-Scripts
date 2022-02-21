@@ -1,0 +1,35 @@
+-- joins
+-- country and count of emplyees
+select r.country, count(*)
+from employees e
+join regions r
+on e.region_id = r.region_id
+group by r.country;
+
+ 
+ select distinct e.department, d.department
+ from employees e
+ left join departments d
+ on e.department = d.department
+ where d.department is NULL;
+ 
+ -- union, union all, except
+ select department, count(*)
+ from employees
+ group by department
+ union all
+ select 'TOTAL' , count(*)
+ from employees;
+ 
+ -- oldest and newest employee
+ 
+ select e.first_name, e.department, e.hire_Date, r.country
+ from employees e
+ join regions r
+ on e.region_id = r.region_id
+ where e.hire_date = (select min(hire_date) from employees) 
+ 	or e.hire_Date = (select max(hire_date) from employees)
+order by e.first_name;
+
+ 
+ 
