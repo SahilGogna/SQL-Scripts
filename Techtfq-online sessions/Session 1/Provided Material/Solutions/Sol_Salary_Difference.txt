@@ -1,0 +1,18 @@
+-- Solution
+with eng as
+	(select max(salary) as max_salary
+	from db_employee e
+	join db_dept d on d.id = e.department_id
+	where d.department = 'engineering'),
+	mkt as
+	(select max(salary) as max_salary
+	from db_employee e
+	join db_dept d on d.id = e.department_id
+	where d.department = 'marketing')
+select abs(eng.max_salary - mkt.max_salary) as diff_sal
+from eng
+cross join mkt;
+
+
+-- Assignment:
+-- Re-write the above query by using just a single sub query.

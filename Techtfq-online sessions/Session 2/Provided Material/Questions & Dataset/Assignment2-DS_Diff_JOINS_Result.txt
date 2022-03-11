@@ -1,0 +1,18 @@
+/* Imagine you are given 2 tables, TAB1 and TAB2. Both have a single column A.
+ And both tables have 3 records in them with value 1.
+ What would the following joins (INNER Join, LEFT Join, RIGHT Join, FULL Outer Join,
+ Cross Join and Natural Join) return? */
+
+drop table tab1;
+drop table tab2;
+
+create table tab1(a int);
+create table tab2(a int);
+
+insert into tab1 values (1);
+insert into tab1 values (1);
+insert into tab1 values (1);
+
+insert into tab2 values (1);
+insert into tab2 values (1);
+insert into tab2 values (1);
